@@ -33,6 +33,21 @@
 
 ## 🏗 System Architecture
 
+```mermaid
+graph TD
+    User([User]) -->|Uploads / URL| Frontend[Next.js Frontend]
+    Frontend -->|API Request| Backend[Next.js API Routes]
+    Backend -->|git clone / copy| Disk[(os.tmpdir)]
+    Backend -->|AST Parsing| Analyzer[Babel Parser & Analyzer]
+    Analyzer -->|Reads| Disk
+    Analyzer -->|Generates| Graph[Mermaid.js Architecture Graph]
+    Graph --> Frontend
+    User -->|Asks Question| Chat[AI Chat UI]
+    Chat -->|Streams Query| AI[Vercel AI SDK / OpenRouter]
+    AI -->|Fetches Context| Disk
+    AI -->|Responds| User
+```
+
 1. **Upload / Clone Phase:** The user provides a GitHub URL or uploads files. The backend securely provisions a temporary directory (`os.tmpdir()`) and pulls the repository via `simple-git`.
 2. **Analysis Phase:** A custom AST traversal tool recursively scans `.ts`, `.js`, `.py`, `.java`, etc. Files are parsed using Babel to discover local and external `imports`/`exports`.
 3. **Graph Construction:** The raw file tree and dependency map are fused into a structured node-link representation suitable for Mermaid.js rendering.
